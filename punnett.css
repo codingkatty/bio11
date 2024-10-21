@@ -1,0 +1,137 @@
+.calculator-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.tab-container {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    border-bottom: 2px solid #e3e3e3;
+    padding-bottom: 1rem;
+}
+
+.tab-btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 6px;
+    background: #e9f5ff;
+    color: #107e7dff;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.tab-btn.active {
+    background: #107e7dff;
+    color: white;
+}
+
+.input-group {
+    width:100%;
+    margin-bottom: 1.5rem;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #333;
+    font-weight: 500;
+}
+
+.input-group input, .input-group select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid #e3e3e3;
+    border-radius: 6px;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+}
+
+.input-group input:focus, .input-group select:focus {
+    border-color: #107e7dff;
+    outline: none;
+}
+
+.input-group input {
+    width: 97%;
+}
+
+.allele-select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid #e3e3e3;
+    border-radius: 6px;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    background: white;
+}
+
+.generate-btn {
+    padding: 0.75rem 1.5rem;
+    background: #107e7dff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    width: 100%;
+    margin-bottom: 2rem;
+}
+
+.generate-btn:hover {
+    background: #0c6261;
+}
+
+.punnett-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 2rem;
+}
+
+.punnett-table th, .punnett-table td {
+    border: 2px solid #107e7dff;
+    padding: 1rem;
+    text-align: center;
+    font-size: 1.1rem;
+}
+
+.punnett-table th {
+    background: #e9f5ff;
+    color: #107e7dff;
+}
+
+.punnett-table td:hover {
+    background: #b1677e;
+}
+
+.trait-form {
+    display: none;
+}
+
+.trait-form.active {
+    display: block;
+}
+
+.error-message {
+    color: #f44336;
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.results-container {
+    margin-top: 2rem;
+}
+
+.phenotype-ratio {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: #e9f5ff;
+    border-radius: 6px;
+    color: #107e7dff;
+}

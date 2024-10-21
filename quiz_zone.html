@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Genetics World</title>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="quiz.css">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22256%22 height=%22256%22 viewBox=%220 0 100 100%22><text x=%2250%%22 y=%2250%%22 dominant-baseline=%22central%22 text-anchor=%22middle%22 font-size=%2288%22>🧬</text></svg>" />
+</head>
+
+<body>
+    <nav>
+        <ul>
+            <li><a href="index.html" id="home">Home ✨</a></li>
+            <li><a href="introduction.html" id="introduction">Introduction 🧬</a></li>
+            <li><a href="punnett_square.html" id="punnett">Punnett Square 📑</a></li>
+            <li><a href="diseases.html" id="genetic">Diseases 💊</a></li>
+            <li><a href="quiz_zone.html" id="quiz" class="active">Trivia Time! 🌐</a></li>
+            <li><a href="dictionary.html" id="dictionary">Dictionary 📖</a></li>
+            <li><a href="about.html" id="about">About Me 🩷</a></li>
+        </ul>
+    </nav>
+
+
+    <div class="quiz-container">
+        <div class="score-display">Score: <span id="score">0</span> / <span id="total">0</span></div>
+        <div id="question-container" class="question-container">
+            <div id="question" class="question"></div>
+            <div id="answer-buttons" class="btn-container"></div>
+            <div id="feedback" class="feedback"></div>
+        </div>
+        <button id="next-button" class="next-btn">Next Question</button>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "What is the term for a physical characteristic resulting from a gene?",
+                answers: [
+                    { text: "Phenotype", correct: true },
+                    { text: "Genotype", correct: false },
+                    { text: "Allele", correct: false },
+                    { text: "Chromosome", correct: false }
+                ]
+            },
+            {
+                question: "Which of these is a dominant genetic trait?",
+                answers: [
+                    { text: "Blue eyes", correct: false },
+                    { text: "Brown eyes", correct: true },
+                    { text: "Blonde hair", correct: false },
+                    { text: "Red hair", correct: false }
+                ]
+            },
+            {
+                question: "What is the P generation in Mendel's experiments?",
+                answers: [
+                    { text: "The first generation of offspring", correct: false },
+                    { text: "The original parents", correct: true },
+                    { text: "The second generation of offspring", correct: false },
+                    { text: "The generation that shows recessive traits", correct: false }
+                ]
+            },
+            {
+                question: "What is Mendel's First Law of Segregation?",
+                answers: [
+                    { text: "Alleles are inherited together", correct: false },
+                    { text: "Only one allele from each pair is inherited in a gamete", correct: true },
+                    { text: "Traits are blended in offspring", correct: false },
+                    { text: "All traits are dominant", correct: false }
+                ]
+            },
+            {
+                question: "In a dihybrid cross, how many phenotypic ratios are typically observed?",
+                answers: [
+                    { text: "3:1", correct: false },
+                    { text: "9:3:3:1", correct: true },
+                    { text: "1:1", correct: false },
+                    { text: "2:1", correct: false }
+                ]
+            },
+            {
+                question: "What is the total number of chromosomes in a normal human somatic cell?",
+                answers: [
+                    { text: "44", correct: false },
+                    { text: "46", correct: true },
+                    { text: "23", correct: false },
+                    { text: "48", correct: false }
+                ]
+            },
+            {
+                question: "Which genetic disorder is caused by nondisjunction of chromosome 21?",
+                answers: [
+                    { text: "Turner syndrome", correct: false },
+                    { text: "Klinefelter syndrome", correct: false },
+                    { text: "Down syndrome", correct: true },
+                    { text: "Hemophilia", correct: false }
+                ]
+            },
+            {
+                question: "What is the genotype of a female with Turner syndrome?",
+                answers: [
+                    { text: "XX", correct: false },
+                    { text: "XY", correct: false },
+                    { text: "XO", correct: true },
+                    { text: "XXY", correct: false }
+                ]
+            },
+            {
+                question: "What type of inheritance pattern does hemophilia follow?",
+                answers: [
+                    { text: "Autosomal dominant", correct: false },
+                    { text: "Autosomal recessive", correct: false },
+                    { text: "X-linked recessive", correct: true },
+                    { text: "Y-linked", correct: false }
+                ]
+            },
+            {
+                question: "What is the phenotype of a person with genotype IₐIₒ?",
+                answers: [
+                    { text: "Blood group A", correct: true },
+                    { text: "Blood group B", correct: false },
+                    { text: "Blood group AB", correct: false },
+                    { text: "Blood group O", correct: false }
+                ]
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let hasAnswered = false;
+
+        const questionElement = document.getElementById("question");
+        const answerButtonsElement = document.getElementById("answer-buttons");
+        const nextButton = document.getElementById("next-button");
+        const feedbackElement = document.getElementById("feedback");
+        const scoreElement = document.getElementById("score");
+        const totalElement = document.getElementById("total");
+
+        function startQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            hasAnswered = false;
+            nextButton.style.display = "none";
+            nextButton.textContent = "Next Question";
+            scoreElement.textContent = score;
+            totalElement.textContent = questions.length;
+            showQuestion();
+        }
+
+        function showQuestion() {
+            resetState();
+            let currentQuestion = questions[currentQuestionIndex];
+            questionElement.textContent = currentQuestion.question;
+
+            currentQuestion.answers.forEach(answer => {
+                const button = document.createElement("button");
+                button.textContent = answer.text;
+                button.classList.add("answer-btn", "fade-in");
+                button.dataset.correct = answer.correct;
+                button.addEventListener("click", selectAnswer);
+                answerButtonsElement.appendChild(button);
+            });
+
+            hasAnswered = false;
+        }
+
+        function resetState() {
+            feedbackElement.className = "feedback";
+            feedbackElement.textContent = "";
+            nextButton.style.display = "none";
+            while (answerButtonsElement.firstChild) {
+                answerButtonsElement.removeChild(answerButtonsElement.firstChild);
+            }
+        }
+
+        function selectAnswer(e) {
+            if (hasAnswered) return;
+            hasAnswered = true;
+
+            const selectedButton = e.target;
+            const correct = selectedButton.dataset.correct === "true";
+
+            if (correct) {
+                score++;
+                scoreElement.textContent = score;
+                feedbackElement.textContent = "Correct! Well done!";
+                feedbackElement.className = "feedback correct show";
+                selectedButton.classList.add("correct");
+            } else {
+                feedbackElement.textContent = "Incorrect. Try again next time!";
+                feedbackElement.className = "feedback incorrect show";
+                selectedButton.classList.add("incorrect");
+
+                // Show the correct answer
+                Array.from(answerButtonsElement.children).forEach(button => {
+                    if (button.dataset.correct === "true") {
+                        button.classList.add("correct");
+                    }
+                });
+            }
+
+            Array.from(answerButtonsElement.children).forEach(button => {
+                button.disabled = true;
+            });
+
+            nextButton.style.display = "block";
+
+            if (currentQuestionIndex === questions.length - 1) {
+                nextButton.textContent = "Restart Quiz";
+            } else {
+                nextButton.textContent = "Next Question";
+            }
+        }
+
+        nextButton.addEventListener("click", () => {
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                showQuestion();
+            } else {
+                startQuiz();
+            }
+        });
+
+        startQuiz();
+    </script>
+
+
+
+</body>
+
+</html>

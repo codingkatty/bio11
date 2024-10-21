@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Genetics World</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="punnett.css">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22256%22 height=%22256%22 viewBox=%220 0 100 100%22><text x=%2250%%22 y=%2250%%22 dominant-baseline=%22central%22 text-anchor=%22middle%22 font-size=%2288%22>🧬</text></svg>" />
+</head>
+
+<body>
+    <nav>
+        <ul>
+            <li><a href="index.html" id="home">Home ✨</a></li>
+            <li><a href="introduction.html" id="introduction">Introduction 🧬</a></li>
+            <li><a href="punnett_square.html" id="punnett" class="active">Punnett Square 📑</a></li>
+            <li><a href="diseases.html" id="genetic">Diseases 💊</a></li>
+            <li><a href="quiz_zone.html" id="quiz">Trivia Time! 🌐</a></li>
+            <li><a href="dictionary.html" id="dictionary">Dictionary 📖</a></li>
+            <li><a href="about.html" id="about">About Me 🩷</a></li>
+        </ul>
+    </nav>
+
+    <div class="calculator-container">
+        <div class="tab-container">
+            <button class="tab-btn active" onclick="switchTab('one-trait')">One Trait</button>
+            <button class="tab-btn" onclick="switchTab('two-trait')">Two Trait</button>
+        </div>
+
+        <!-- One Trait Form -->
+        <div id="one-trait-form" class="trait-form active">
+            <div class="input-group">
+                <label>Female Genotype (e.g., Bb):</label>
+                <input type="text" id="female-genotype-1" maxlength="2" placeholder="Bb">
+            </div>
+            <div class="input-group">
+                <label>Male Genotype (e.g., bb):</label>
+                <input type="text" id="male-genotype-1" maxlength="2" placeholder="bb">
+            </div>
+            <div class="input-group">
+                <label>Trait Name:</label>
+                <input type="text" id="trait-name-1" placeholder="e.g., Color">
+                <label>Dominant Allele:</label>
+                <select class="allele-select" id="dominant-allele-1">
+                    <option value="">Select dominant allele</option>
+                </select>
+            </div>
+            <button class="generate-btn" onclick="generatePunnett(1)">Generate Punnett Square</button>
+        </div>
+
+        <!-- Two Trait Form -->
+        <div id="two-trait-form" class="trait-form">
+            <div class="input-group">
+                <label>Female Genotype (e.g., BbKk):</label>
+                <input type="text" id="female-genotype-2" maxlength="4" placeholder="BbKk">
+            </div>
+            <div class="input-group">
+                <label>Male Genotype (e.g., BbKk):</label>
+                <input type="text" id="male-genotype-2" maxlength="4" placeholder="BbKk">
+            </div>
+            <div class="input-group">
+                <label>First Trait Name:</label>
+                <input type="text" id="trait-name-2-1" placeholder="e.g., Color">
+                <label>Dominant Allele:</label>
+                <select class="allele-select" id="dominant-allele-2-1">
+                    <option value="">Select dominant allele</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>Second Trait Name:</label>
+                <input type="text" id="trait-name-2-2" placeholder="e.g., Height">
+                <label>Dominant Allele:</label>
+                <select class="allele-select" id="dominant-allele-2-2">
+                    <option value="">Select dominant allele</option>
+                </select>
+            </div>
+            <button class="generate-btn" onclick="generatePunnett(2)">Generate Punnett Square</button>
+        </div>
+
+        <div id="results-container" class="results-container"></div>
+    </div>
+
+    <script>
+        // Update dominant allele options based on both genotypes
+        function updateAlleleOptions() {
+            const femaleGenotype1 = document.getElementById('female-genotype-1').value.trim();
+            const maleGenotype1 = document.getElementById('male-genotype-1').value.trim();
+            const femaleGenotype2 = document.getElementById('female-genotype-2').value.trim();
+            const maleGenotype2 = document.getElementById('male-genotype-2').value.trim();
+
+            const uniqueAlleles1 = [...new Set(femaleGenotype1.split('').concat(maleGenotype1.split('')))];
+            const uniqueAlleles2 = [...new Set(femaleGenotype2.split('').concat(maleGenotype2.split('')))];
+
+            const dominantAlleleSelect1 = document.getElementById('dominant-allele-1');
+            const dominantAlleleSelect2_1 = document.getElementById('dominant-allele-2-1');
+            const dominantAlleleSelect2_2 = document.getElementById('dominant-allele-2-2');
+
+            // Update options for one trait
+            dominantAlleleSelect1.innerHTML = '<option value="">Select dominant allele</option>';
+            uniqueAlleles1.forEach(allele => {
+                const option = document.createElement('option');
+                option.value = allele;
+                option.textContent = allele;
+                dominantAlleleSelect1.appendChild(option);
+            });
+
+            // Update options for two traits
+            dominantAlleleSelect2_1.innerHTML = '<option value="">Select dominant allele</option>';
+            uniqueAlleles2.forEach(allele => {
+                const option = document.createElement('option');
+                option.value = allele;
+                option.textContent = allele;
+                dominantAlleleSelect2_1.appendChild(option);
+            });
+
+            dominantAlleleSelect2_2.innerHTML = '<option value="">Select dominant allele</option>';
+            uniqueAlleles2.forEach(allele => {
+                const option = document.createElement('option');
+                option.value = allele;
+                option.textContent = allele;
+                dominantAlleleSelect2_2.appendChild(option);
+            });
+        }
+
+        // Initialize allele option updates
+        document.getElementById('female-genotype-1').addEventListener('input', updateAlleleOptions);
+        document.getElementById('male-genotype-1').addEventListener('input', updateAlleleOptions);
+        document.getElementById('female-genotype-2').addEventListener('input', updateAlleleOptions);
+        document.getElementById('male-genotype-2').addEventListener('input', updateAlleleOptions);
+
+        function switchTab(tab) {
+            document.querySelectorAll('.trait-form').forEach(form => form.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+
+            document.getElementById(`${tab}-form`).classList.add('active');
+            event.target.classList.add('active');
+
+            document.getElementById('results-container').innerHTML = '';
+        }
+
+        function validateGenotype(genotype, traitCount) {
+            if (traitCount === 1) {
+                return /^[A-Za-z][A-Za-z]$/.test(genotype);
+            } else {
+                return /^[A-Za-z][A-Za-z][A-Za-z][A-Za-z]$/.test(genotype);
+            }
+        }
+
+        function generateGametes(genotype, traitCount) {
+            if (traitCount === 1) {
+                return [genotype[0], genotype[1]];
+            } else {
+                return [
+                    genotype[0] + genotype[2],
+                    genotype[0] + genotype[3],
+                    genotype[1] + genotype[2],
+                    genotype[1] + genotype[3]
+                ];
+            }
+        }
+
+        function generatePunnett(traitCount) {
+            const resultsContainer = document.getElementById('results-container');
+            resultsContainer.innerHTML = '';
+
+            // Get input values
+            const femaleGenotype = document.getElementById(`female-genotype-${traitCount}`).value.trim();
+            const maleGenotype = document.getElementById(`male-genotype-${traitCount}`).value.trim();
+
+            // Validate dominant allele selection
+            if (traitCount === 1) {
+                const dominantAllele = document.getElementById('dominant-allele-1').value;
+                if (!dominantAllele) {
+                    resultsContainer.innerHTML = '<div class="error-message">Please select the dominant allele.</div>';
+                    return;
+                }
+            } else {
+                const dominantAllele1 = document.getElementById('dominant-allele-2-1').value;
+                const dominantAllele2 = document.getElementById('dominant-allele-2-2').value;
+                if (!dominantAllele1 || !dominantAllele2) {
+                    resultsContainer.innerHTML = '<div class="error-message">Please select both dominant alleles.</div>';
+                    return;
+                }
+            }
+
+            // Validate input
+            if (!validateGenotype(femaleGenotype, traitCount) || !validateGenotype(maleGenotype, traitCount)) {
+                resultsContainer.innerHTML = '<div class="error-message">Please enter valid genotypes.</div>';
+                return;
+            }
+
+            // Generate gametes
+            const femaleGametes = generateGametes(femaleGenotype, traitCount);
+            const maleGametes = generateGametes(maleGenotype, traitCount);
+
+            // Create table
+            let tableHtml = '<table class="punnett-table"><tr><th></th>';
+
+            // Add male gametes as column headers
+            maleGametes.forEach(gamete => {
+                tableHtml += `<th>${gamete}</th>`;
+            });
+            tableHtml += '</tr>';
+
+            // Generate Punnett square and count phenotypes
+            const phenotypeCount = {};
+            femaleGametes.forEach(femaleGamete => {
+                tableHtml += `<tr><th>${femaleGamete}</th>`;
+                maleGametes.forEach(maleGamete => {
+                    let offspring = '';
+                    if (traitCount === 1) {
+                        offspring = combineGametes(femaleGamete, maleGamete);
+                    } else {
+                        offspring = combineTwoTraitGametes(femaleGamete, maleGamete);
+                    }
+                    tableHtml += `<td>${offspring}</td>`;
+
+                    // Count phenotypes
+                    const phenotype = getPhenotype(offspring, traitCount);
+                    phenotypeCount[phenotype] = (phenotypeCount[phenotype] || 0) + 1;
+                });
+                tableHtml += '</tr>';
+            });
+            tableHtml += '</table>';
+
+            // Add phenotype ratio
+            const totalOffspring = Object.values(phenotypeCount).reduce((a, b) => a + b, 0);
+            let ratioHtml = '<div class="phenotype-ratio"><p><strong>Phenotype Ratio:</strong><br>';
+            for (let phenotype in phenotypeCount) {
+                const percentage = (phenotypeCount[phenotype] / totalOffspring * 100).toFixed(1);
+                const ratio = phenotypeCount[phenotype] + " in " + totalOffspring;
+                ratioHtml += `${phenotype}: ${ratio} (${percentage}%)<br>`;
+            }
+            ratioHtml += '</p></div>';
+
+            resultsContainer.innerHTML = tableHtml + ratioHtml;
+        }
+
+        function combineGametes(female, male) {
+            return [female, male].sort().join('');
+        }
+
+        function combineTwoTraitGametes(female, male) {
+            return [female[0], male[0]].sort().join('') + [female[1], male[1]].sort().join('');
+        }
+
+        function getPhenotype(genotype, traitCount) {
+            if (traitCount === 1) {
+                const dominantAllele = document.getElementById('dominant-allele-1').value;
+                const traitName = document.getElementById('trait-name-1').value;
+                return genotype.includes(dominantAllele) ? `${traitName} (Dominant)` : `${traitName} (Recessive)`;
+            } else {
+                const dominantAllele1 = document.getElementById('dominant-allele-2-1').value;
+                const dominantAllele2 = document.getElementById('dominant-allele-2-2').value;
+                const trait1 = document.getElementById('trait-name-2-1').value;
+                const trait2 = document.getElementById('trait-name-2-2').value;
+
+                const hasTrait1 = genotype.slice(0, 2).includes(dominantAllele1);
+                const hasTrait2 = genotype.slice(2, 4).includes(dominantAllele2);
+
+                return `${trait1} (${hasTrait1 ? 'Dominant' : 'Recessive'}), ${trait2} (${hasTrait2 ? 'Dominant' : 'Recessive'})`;
+            }
+        }
+    </script>
+
+</body>
+
+</html>
